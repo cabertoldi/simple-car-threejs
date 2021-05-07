@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const scene = new THREE.Scene();
+var scene = new THREE.Scene();
 
 // Light
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -55,10 +55,10 @@ function getCarFrontTexture() {
   return new THREE.CanvasTexture(canvas);
 }
 
-function getCarSideTexture() {
+function getCarSideTexture(height) {
   const canvas = document.createElement("canvas");
   canvas.width = 128;
-  canvas.height = 32;
+  canvas.height = height;
   const context = canvas.getContext("2d");
 
   context.fillStyle = "#ffffff";
@@ -66,9 +66,9 @@ function getCarSideTexture() {
 
   context.fillStyle = "#666666";
   context.fillRect(10, 8, 38, 24);
-  context.fillRect(58, 8, 60, 24);
+  context.fillRect(58, 8, 50, 24);
 
-  return new THREE.CanvasTexture(canvas);
+  return canvas;
 }
 
 function createCar() {
@@ -95,9 +95,12 @@ function createCar() {
 
   const carBackTexture = getCarFrontTexture();
 
-  const carRightSideTexture = getCarSideTexture();
+  const carRightSide = getCarSideTexture(32);
+  const carRightSideTexture = new THREE.CanvasTexture(carRightSide);
 
-  const carLeftSideTexture = getCarSideTexture();
+  const carLeftSide = getCarSideTexture(32);
+  const carLeftSideTexture = new THREE.CanvasTexture(carLeftSide);
+
   carLeftSideTexture.center = new THREE.Vector2(0.5, 0.5);
   carLeftSideTexture.rotation = Math.PI;
   carLeftSideTexture.flipY = false;
@@ -121,3 +124,16 @@ const car = createCar();
 scene.add(car);
 
 renderer.render(scene, camera);
+
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+  var keyCode = event.which;
+  if (keyCode === 37) {
+    car.rotation.y -= 0.05;
+  }
+  if (keyCode === 39) {
+    car.rotation.y += 0.05;
+  }
+
+  renderer.render(scene, camera);
+}
