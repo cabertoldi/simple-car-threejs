@@ -33,6 +33,77 @@ renderer.render(scene, camera);
 
 document.body.appendChild(renderer.domElement);
 
+const car = new THREE.Group();
+
+const backWheel = createWheels();
+backWheel.position.y = 6;
+backWheel.position.x = -18;
+car.add(backWheel);
+
+const frontWheel = createWheels();
+frontWheel.position.y = 6;
+frontWheel.position.x = 18;
+car.add(frontWheel);
+
+const main = new THREE.Mesh(
+  new THREE.BoxBufferGeometry(60, 15, 30),
+  new THREE.MeshLambertMaterial({ color: 0xa52523 })
+);
+main.position.y = 12;
+car.add(main);
+
+const carFrontTexture = getCarFrontTexture();
+
+const carBackTexture = getCarFrontTexture();
+
+const carRightSide = getCarSideTexture(32);
+const carRightSideTexture = new THREE.CanvasTexture(carRightSide);
+
+const carLeftSide = getCarSideTexture(32);
+const carLeftSideTexture = new THREE.CanvasTexture(carLeftSide);
+
+carLeftSideTexture.center = new THREE.Vector2(0.5, 0.5);
+carLeftSideTexture.rotation = Math.PI;
+carLeftSideTexture.flipY = false;
+
+const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33, 12, 24), [
+  new THREE.MeshLambertMaterial({ map: carFrontTexture }),
+  new THREE.MeshLambertMaterial({ map: carBackTexture }),
+  new THREE.MeshLambertMaterial({ color: 0xffffff }), // top
+  new THREE.MeshLambertMaterial({ color: 0xffffff }), // bottom
+  new THREE.MeshLambertMaterial({ map: carRightSideTexture }),
+  new THREE.MeshLambertMaterial({ map: carLeftSideTexture })
+]);
+cabin.position.x = -6;
+cabin.position.y = 25.5;
+car.add(cabin);
+
+scene.add(car);
+
+renderer.render(scene, camera);
+
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+  var keyCode = event.which;
+  if (keyCode === 37) {
+    car.rotation.y -= 0.05;
+  }
+  if (keyCode === 38) {
+    car.position.x -= 25;
+  }
+  if (keyCode === 39) {
+    car.rotation.y += 0.05;
+  }
+  if (keyCode === 40) {
+    car.position.x += 25;
+  }
+  if (keyCode === 37) {
+    car.rotation.y -= 0.05;
+  }
+
+  renderer.render(scene, camera);
+}
+
 function createWheels() {
   const geometry = new THREE.BoxBufferGeometry(12, 12, 33);
   const material = new THREE.MeshLambertMaterial({ color: 0x333333 });
@@ -69,71 +140,4 @@ function getCarSideTexture(height) {
   context.fillRect(58, 8, 50, 24);
 
   return canvas;
-}
-
-function createCar() {
-  const car = new THREE.Group();
-
-  const backWheel = createWheels();
-  backWheel.position.y = 6;
-  backWheel.position.x = -18;
-  car.add(backWheel);
-
-  const frontWheel = createWheels();
-  frontWheel.position.y = 6;
-  frontWheel.position.x = 18;
-  car.add(frontWheel);
-
-  const main = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(60, 15, 30),
-    new THREE.MeshLambertMaterial({ color: 0xa52523 })
-  );
-  main.position.y = 12;
-  car.add(main);
-
-  const carFrontTexture = getCarFrontTexture();
-
-  const carBackTexture = getCarFrontTexture();
-
-  const carRightSide = getCarSideTexture(32);
-  const carRightSideTexture = new THREE.CanvasTexture(carRightSide);
-
-  const carLeftSide = getCarSideTexture(32);
-  const carLeftSideTexture = new THREE.CanvasTexture(carLeftSide);
-
-  carLeftSideTexture.center = new THREE.Vector2(0.5, 0.5);
-  carLeftSideTexture.rotation = Math.PI;
-  carLeftSideTexture.flipY = false;
-
-  const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33, 12, 24), [
-    new THREE.MeshLambertMaterial({ map: carFrontTexture }),
-    new THREE.MeshLambertMaterial({ map: carBackTexture }),
-    new THREE.MeshLambertMaterial({ color: 0xffffff }), // top
-    new THREE.MeshLambertMaterial({ color: 0xffffff }), // bottom
-    new THREE.MeshLambertMaterial({ map: carRightSideTexture }),
-    new THREE.MeshLambertMaterial({ map: carLeftSideTexture })
-  ]);
-  cabin.position.x = -6;
-  cabin.position.y = 25.5;
-  car.add(cabin);
-
-  return car;
-}
-
-const car = createCar();
-scene.add(car);
-
-renderer.render(scene, camera);
-
-document.addEventListener("keydown", onDocumentKeyDown, false);
-function onDocumentKeyDown(event) {
-  var keyCode = event.which;
-  if (keyCode === 37) {
-    car.rotation.y -= 0.05;
-  }
-  if (keyCode === 39) {
-    car.rotation.y += 0.05;
-  }
-
-  renderer.render(scene, camera);
 }
